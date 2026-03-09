@@ -85,7 +85,7 @@ export function ProductDetailPage() {
                             <Button
                                 size="lg"
                                 className="bg-[#FF5A7E] hover:bg-[#FF5A7E]/90 w-full md:w-auto px-12"
-                                onClick={() => navigate('/contact')}
+                                onClick={() => navigate('/contact', { state: { productName: product.title } })}
                             >
                                 <Send className="mr-2" size={18} />
                                 {t('products.btn_order', 'Buyurtma berish')}

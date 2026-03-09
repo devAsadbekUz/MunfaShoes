@@ -1,4 +1,5 @@
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -10,6 +11,7 @@ import { supabase } from '../lib/supabase';
 
 export function ContactPage() {
   const { t } = useTranslation();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -23,7 +25,16 @@ export function ContactPage() {
 
   useEffect(() => {
     fetchSettings();
-  }, []);
+
+    // Pre-fill message if coming from a product page
+    if (location.state && (location.state as any).productName) {
+      const pName = (location.state as any).productName;
+      setFormData(prev => ({
+        ...prev,
+        message: `${t('contact.order_prefill', "Men quyidagi mahsulotga buyurtma bermoqchiman")}: ${pName}\n\n`
+      }));
+    }
+  }, [location]);
 
   const fetchSettings = async () => {
     const { data } = await supabase
@@ -122,6 +133,12 @@ export function ContactPage() {
             {/* Contact Form */}
             <div>
               <h2 className="text-3xl mb-6">{t('contact.form_title', 'Xabar yuboring')}</h2>
+              {location.state && (location.state as any).productName && (
+                <div className="bg-[#FF5A7E]/10 border border-[#FF5A7E] rounded-lg p-3 mb-6 text-[#FF5A7E] font-medium flex items-center gap-2">
+                  <Send size={18} />
+                  {t('contact.inquiring_about', 'So\'rov:')} {(location.state as any).productName}
+                </div>
+              )}
               <Card className="p-6">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
