@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
 import { supabase } from './lib/supabase';
@@ -9,6 +9,8 @@ import { Analytics } from '@vercel/analytics/react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { HelmetProvider } from 'react-helmet-async';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Skeleton } from './components/ui/skeleton';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('home');
@@ -88,7 +90,28 @@ export default function App() {
       <div className="min-h-screen flex flex-col">
         <Navigation currentPage={activeSection} onNavigate={scrollToSection} />
         <main className="flex-1">
-          <Outlet context={{ scrollToSection }} />
+          <AnimatePresence>
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Suspense fallback={
+                <div className="container mx-auto px-4 py-20 space-y-8">
+                  <Skeleton className="h-12 w-3/4" />
+                  <Skeleton className="h-64 w-full" />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Skeleton className="h-40 w-full" />
+                    <Skeleton className="h-40 w-full" />
+                    <Skeleton className="h-40 w-full" />
+                  </div>
+                </div>
+              }>
+                <Outlet context={{ scrollToSection }} />
+              </Suspense>
+            </motion.div>
+          </AnimatePresence>
         </main>
         <Footer onNavigate={scrollToSection} />
         {!isAdminRoute && <FloatingCallButton />}

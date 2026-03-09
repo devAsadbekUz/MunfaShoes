@@ -7,6 +7,8 @@ import { Badge } from './ui/badge';
 import { Card } from './ui/card';
 import { ArrowLeft, Send } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import { Skeleton } from './ui/skeleton';
+import { motion } from 'framer-motion';
 
 export function ProductDetailPage() {
     const { slug } = useParams();
@@ -66,71 +68,116 @@ export function ProductDetailPage() {
         window.open(`${tMeUrl}?text=${message}`, '_blank');
     };
 
-    if (loading) return <div className="py-20 text-center">{t('common.loading', 'Yuklanmoqda...')}</div>;
+    if (loading) {
+        return (
+            <div className="py-20 bg-gray-50">
+                <div className="container mx-auto px-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <Skeleton className="aspect-square w-full rounded-xl" />
+                        <div className="space-y-4">
+                            <Skeleton className="h-6 w-24" />
+                            <Skeleton className="h-10 w-3/4" />
+                            <Skeleton className="h-32 w-full" />
+                            <div className="pt-10">
+                                <Skeleton className="h-12 w-40" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
     if (!product) return null;
 
     return (
-        <div className="py-20 bg-gray-50">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="py-20 bg-gray-50"
+        >
             <Helmet>
                 <title>{`${product.title} | Munfa Shoes`}</title>
                 <meta name="description" content={product.description} />
             </Helmet>
 
             <div className="container mx-auto px-4">
-                <Button
-                    variant="ghost"
-                    className="mb-8 hover:text-[#FF5A7E]"
-                    onClick={() => navigate('/products')}
+                <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
                 >
-                    <ArrowLeft className="mr-2" size={20} />
-                    {t('products.back_to_catalog', 'Katalogga qaytish')}
-                </Button>
+                    <Button
+                        variant="ghost"
+                        className="mb-8 hover:text-[#FF5A7E]"
+                        onClick={() => navigate('/products')}
+                    >
+                        <ArrowLeft className="mr-2" size={20} />
+                        {t('products.back_to_catalog', 'Katalogga qaytish')}
+                    </Button>
+                </motion.div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                     {/* Image Section */}
-                    <Card className="overflow-hidden bg-white">
-                        <div className="aspect-square relative flex items-center justify-center p-4">
-                            {product.image_url ? (
-                                <img
-                                    src={product.image_url}
-                                    alt={product.title}
-                                    className="w-full h-full object-contain"
-                                />
-                            ) : (
-                                <div className="text-gray-400">{t('products.no_image')}</div>
-                            )}
-                        </div>
-                    </Card>
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <Card className="overflow-hidden bg-white shadow-lg border-none">
+                            <div className="aspect-square relative flex items-center justify-center p-4">
+                                {product.image_url ? (
+                                    <img
+                                        src={product.image_url}
+                                        alt={product.title}
+                                        className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
+                                    />
+                                ) : (
+                                    <div className="text-gray-400">{t('products.no_image')}</div>
+                                )}
+                            </div>
+                        </Card>
+                    </motion.div>
 
                     {/* Details Section */}
-                    <div className="flex flex-col">
-                        <Badge className="w-fit mb-4 bg-[#FF5A7E]">
+                    <motion.div
+                        initial={{ x: 20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                        className="flex flex-col"
+                    >
+                        <Badge className="w-fit mb-4 bg-[#FF5A7E] hover:bg-[#FF5A7E]">
                             {product.categories?.name}
                         </Badge>
-                        <h1 className="text-4xl font-bold mb-4">{product.title}</h1>
+                        <h1 className="text-4xl font-bold mb-4 text-gray-900">{product.title}</h1>
                         <p className="text-xl text-gray-600 mb-8 leading-relaxed">
                             {product.description}
                         </p>
 
                         <div className="mt-auto space-y-6" id="product-actions-container">
-                            <Button
-                                size="lg"
-                                className="bg-[#FF5A7E] hover:bg-[#FF5A7E]/90 w-full md:w-auto px-12"
-                                onClick={handleOrder}
+                            <motion.div
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                             >
-                                <Send className="mr-2" size={18} />
-                                {t('products.btn_order', 'Buyurtma berish')}
-                            </Button>
+                                <Button
+                                    size="lg"
+                                    className="bg-[#FF5A7E] hover:bg-[#FF5A7E]/90 w-full md:w-auto px-12 shadow-md"
+                                    onClick={handleOrder}
+                                >
+                                    <Send className="mr-2" size={18} />
+                                    {t('products.btn_order', 'Buyurtma berish')}
+                                </Button>
+                            </motion.div>
 
                             <div className="pt-6 border-t border-gray-200">
                                 <p className="text-sm text-gray-500">
-                                    {t('products.tag_label', 'Kategoriya')}: {product.categories?.name}
+                                    {t('products.tag_label', 'Kategoriya')}: <span className="font-medium text-gray-700">{product.categories?.name}</span>
                                 </p>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }

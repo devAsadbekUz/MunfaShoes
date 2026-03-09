@@ -15,7 +15,7 @@ async function generateSitemap() {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   // Static routes
-  const staticRoutes = ['', '/about', '/products', '/contact'];
+  const staticRoutes = ['/', '/about', '/products', '/contact'];
 
   // Fetch dynamic product routes
   const { data: products } = await supabase.from('products').select('slug');

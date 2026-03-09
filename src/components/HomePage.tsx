@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
+import { motion } from 'framer-motion';
+import { Skeleton } from './ui/skeleton';
 import springCollection from 'figma:asset/b30f6ee2c7a1a02fb6acad59bfd7282f2be40a19.png';
 import summerCollection from 'figma:asset/21b1d6cce1100780743fa6116ba46b9565d95d27.png';
 import winterCollection from 'figma:asset/747bf37266ec0a2b4e1cd6609cca25d73e2c4c9a.png';
@@ -78,12 +80,22 @@ export function HomePage({ onNavigate }: HomePageProps) {
       <section className="relative h-[600px] flex items-center justify-center text-white overflow-hidden">
         {/* Background Image with Blur */}
         <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: heroBgUrl ? `url(${heroBgUrl})` : 'none', backgroundColor: '#1a1a1a' }}
+          className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+          style={{
+            backgroundImage: heroBgUrl ? `url(${heroBgUrl})` : 'none',
+            backgroundColor: '#1a1a1a',
+            opacity: heroBgUrl ? 1 : 0
+          }}
         />
+        {!heroBgUrl && <Skeleton className="absolute inset-0 bg-[#1a1a1a]" />}
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/40" />
-        <div className="relative container mx-auto px-4 text-center">
+        <motion.div
+          className="relative container mx-auto px-4 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           <h1 className="text-5xl md:text-6xl mb-6">
             {t('home.hero_title', 'Munfa - Sifat va Ishonch')}
           </h1>
@@ -108,7 +120,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
               {t('home.btn_more', 'Batafsil')}
             </Button>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Features Section */}
@@ -123,13 +135,21 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => (
-              <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
-                <div className="w-16 h-16 bg-[#FF5A7E]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <feature.icon className="text-[#FF5A7E]" size={32} />
-                </div>
-                <h3 className="mb-2">{feature.title}</h3>
-                <p className="text-gray-600 text-sm">{feature.description}</p>
-              </Card>
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Card className="p-6 text-center hover:shadow-lg transition-shadow h-full">
+                  <div className="w-16 h-16 bg-[#FF5A7E]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <feature.icon className="text-[#FF5A7E]" size={32} />
+                  </div>
+                  <h3 className="mb-2">{feature.title}</h3>
+                  <p className="text-gray-600 text-sm">{feature.description}</p>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -147,8 +167,12 @@ export function HomePage({ onNavigate }: HomePageProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {productCategories.map((category, index) => (
-              <div
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="group cursor-pointer overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
                 onClick={() => onNavigate('products')}
               >
@@ -164,7 +188,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
                     <p className="text-sm text-gray-200">{category.description}</p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
 

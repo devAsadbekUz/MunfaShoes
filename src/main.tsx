@@ -1,10 +1,11 @@
 import { ViteReactSSG } from 'vite-react-ssg';
-import App from "./App.tsx";
-import { LandingPage } from './components/LandingPage';
-import { AboutPage } from './components/AboutPage';
-import { ProductsPage } from './components/ProductsPage';
-import { ContactPage } from './components/ContactPage';
-import { ProductDetailPage } from './components/ProductDetailPage';
+import { lazy, Suspense } from 'react';
+const App = lazy(() => import("./App.tsx"));
+const LandingPage = lazy(() => import("./components/LandingPage").then(module => ({ default: module.LandingPage })));
+const AboutPage = lazy(() => import("./components/AboutPage").then(module => ({ default: module.AboutPage })));
+const ProductsPage = lazy(() => import("./components/ProductsPage").then(module => ({ default: module.ProductsPage })));
+const ContactPage = lazy(() => import("./components/ContactPage").then(module => ({ default: module.ContactPage })));
+const ProductDetailPage = lazy(() => import("./components/ProductDetailPage").then(module => ({ default: module.ProductDetailPage })));
 import "./index.css";
 import "./i18n";
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +18,7 @@ const ProductsPageWrapper = () => {
 const routes = [
     {
         path: '/',
-        element: <App />,
+        element: <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Yuklanmoqda...</div>}><App /></Suspense>,
         children: [
             { index: true, element: <LandingPage /> },
             { path: 'about', element: <AboutPage /> },
@@ -31,9 +32,12 @@ const routes = [
     }
 ];
 
-export const createApp = ViteReactSSG(
+const createRoot = ViteReactSSG(
     { routes },
-    ({ router }) => {
+    () => {
         // Custom setup if needed
     }
 );
+
+export { createRoot };
+export default createRoot;
