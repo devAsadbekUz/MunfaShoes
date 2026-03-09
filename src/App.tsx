@@ -107,7 +107,7 @@ export default function App() {
             <Route path="/products" element={<ProductsPage onNavigate={scrollToSection} />} />
             <Route path="/products/:slug" element={<ProductDetailPage />} />
             <Route path="/contact" element={<ContactPage />} />
-            {/* Catch-all or other routes can be added here */}
+            <Route path="*" element={<LandingPage />} />
           </Routes>
         </main>
         <Footer onNavigate={scrollToSection} />

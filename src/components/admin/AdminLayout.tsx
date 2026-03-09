@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Image as ImageIcon, Tags, Package, Settings, LogOut } from 'lucide-react';
+import { Image as ImageIcon, Tags, Package, Settings, LogOut, MessageSquare } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Button } from '../ui/button';
 import { CategoryManager } from './CategoryManager';
 import { ProductManager } from './ProductManager';
 import { HeroManager } from './HeroManager';
 import { SettingsManager } from './SettingsManager';
+import { MessageManager } from './MessageManager';
 
 interface AdminLayoutProps {
     children: React.ReactNode;
@@ -15,14 +15,14 @@ interface AdminLayoutProps {
 export function AdminLayout({ children, onLogout }: AdminLayoutProps) {
     const [activeTab, setActiveTab] = useState(() => {
         const hash = window.location.hash.replace('#', '');
-        const validTabs = ['hero', 'categories', 'products', 'settings'];
-        return validTabs.includes(hash) ? hash : 'hero';
+        const validTabs = ['hero', 'categories', 'products', 'messages', 'settings'];
+        return validTabs.includes(hash) ? hash : 'messages';
     });
 
     useEffect(() => {
         const handleHashChange = () => {
             const hash = window.location.hash.replace('#', '');
-            const validTabs = ['hero', 'categories', 'products', 'settings'];
+            const validTabs = ['hero', 'categories', 'products', 'messages', 'settings'];
             if (validTabs.includes(hash)) {
                 setActiveTab(hash);
             }
@@ -43,6 +43,7 @@ export function AdminLayout({ children, onLogout }: AdminLayoutProps) {
     };
 
     const navItems = [
+        { id: 'messages', label: 'Buyurtmalar (Xabarlar)', icon: MessageSquare },
         { id: 'hero', label: 'Bosh Sahifa Rasmi', icon: ImageIcon },
         { id: 'categories', label: 'Kategoriyalar', icon: Tags },
         { id: 'products', label: 'Mahsulotlar', icon: Package },
@@ -91,14 +92,17 @@ export function AdminLayout({ children, onLogout }: AdminLayoutProps) {
             {/* Main Content Area */}
             <main className="flex-1 ml-64 p-8">
                 <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-8 min-h-[80vh]">
+                    {activeTab === 'messages' && <h1 className="text-3xl font-bold mb-6">Mijozlar Xabarlari va Buyurtmalar</h1>}
                     {activeTab === 'hero' && <h1 className="text-3xl font-bold mb-6">Bosh Sahifa Rasmi</h1>}
-                    {activeTab === 'categories' && <h1 className="text-3xl font-bold mb-6">Kategoriyalarni Boshqarish</h1>}
-                    {activeTab === 'products' && <h1 className="text-3xl font-bold mb-6">Mahsulotlarni Boshqarish</h1>}
+                    {activeTab === 'categories' && <h1 className="text-3xl font-bold mb-6">Kategoriyalar</h1>}
+                    {activeTab === 'products' && <h1 className="text-3xl font-bold mb-6">Mahsulotlar</h1>}
                     {activeTab === 'settings' && <h1 className="text-3xl font-bold mb-6">Tizim Sozlamalari</h1>}
 
                     {/* Active Tab Content */}
                     <div className="mt-8">
-                        {activeTab === 'hero' ? (
+                        {activeTab === 'messages' ? (
+                            <MessageManager />
+                        ) : activeTab === 'hero' ? (
                             <HeroManager />
                         ) : activeTab === 'categories' ? (
                             <CategoryManager />

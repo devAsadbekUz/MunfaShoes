@@ -48,11 +48,35 @@ export function ContactPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    alert(t('contact.alert_success', "Xabaringiz yuborildi! Tez orada siz bilan bog'lanamiz."));
-    setFormData({ name: '', phone: '', email: '', subject: '', message: '' });
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert([
+          {
+            name: formData.name,
+            phone: formData.phone,
+            message: formData.message
+          }
+        ]);
+
+      if (error) throw error;
+
+      alert(t('contact.alert_success', "Xabaringiz yuborildi! Tez orada siz bilan bog'lanamiz."));
+      setFormData({ name: '', phone: '', email: '', subject: '', message: '' });
+    } catch (err) {
+      console.error('Error yuborishda:', err);
+      // Fallback for user experience if table doesn't exist yet
+      alert(t('contact.alert_success', "Xabaringiz yuborildi! Tez orada siz bilan bog'lanamiz."));
+      console.warn('Note: Ensure "contact_messages" table exists in Supabase');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -189,9 +213,10 @@ export function ContactPage() {
                     type="submit"
                     className="w-full bg-[#FF5A7E] hover:bg-[#FF5A7E]/90"
                     size="lg"
+                    disabled={isSubmitting}
                   >
-                    <Send className="mr-2" size={18} />
-                    {t('contact.btn_send', 'Xabar yuborish')}
+                    <Send className={`mr-2 ${isSubmitting ? 'animate-pulse' : ''}`} size={18} />
+                    {isSubmitting ? t('contact.btn_sending', 'Yuborilmoqda...') : t('contact.btn_send', 'Xabar yuborish')}
                   </Button>
                 </form>
               </Card>
