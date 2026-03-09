@@ -69,7 +69,7 @@ export default defineConfig({
   },
   ssgOptions: {
     script: 'async',
-    formatting: 'minify',
+    formatting: 'none',
     includedRoutes() {
       try {
         const routes = require('./scripts/routes.json');
