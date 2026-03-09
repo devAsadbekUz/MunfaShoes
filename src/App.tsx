@@ -9,6 +9,7 @@ import { supabase } from './lib/supabase';
 import { LoginPage } from './components/admin/LoginPage';
 import { AdminLayout } from './components/admin/AdminLayout';
 import { FloatingCallButton } from './components/FloatingCallButton';
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('home');
@@ -92,6 +93,7 @@ export default function App() {
       </main>
       <Footer onNavigate={scrollToSection} />
       {!isAdminRoute && <FloatingCallButton />}
+      <Analytics />
     </div>
   );
 }
