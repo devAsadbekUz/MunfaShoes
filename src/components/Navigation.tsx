@@ -28,7 +28,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
     { id: 'contact', label: t('nav.contact', 'Aloqa'), path: '/contact' },
   ];
 
-  const handleNavClick = (id: string, path: string) => {
+  const handleNavClick = (id: string) => {
     if (isHome) {
       onNavigate(id);
     } else {
@@ -57,7 +57,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
               <Link
                 key={item.id}
                 to={item.path}
-                onClick={() => handleNavClick(item.id, item.path)}
+                onClick={() => handleNavClick(item.id)}
                 className={`transition-colors hover:text-[#FF5A7E] font-medium text-[15px] ${currentPage === item.id ? 'text-[#FF5A7E]' : 'text-gray-700'
                   }`}
               >
@@ -106,7 +106,7 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
                 key={item.id}
                 to={item.path}
                 onClick={() => {
-                  handleNavClick(item.id, item.path);
+                  handleNavClick(item.id);
                   setMobileMenuOpen(false);
                 }}
                 className={`block w-full text-left px-4 py-3 transition-colors hover:bg-[#FF5A7E]/10 ${currentPage === item.id ? 'text-[#FF5A7E] bg-[#FF5A7E]/5' : 'text-gray-700'

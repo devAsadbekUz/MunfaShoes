@@ -70,5 +70,13 @@ export default defineConfig({
   ssgOptions: {
     script: 'async',
     formatting: 'minify',
+    includedRoutes() {
+      try {
+        const routes = require('./scripts/routes.json');
+        return routes;
+      } catch (e) {
+        return ['/', '/about', '/products', '/contact'];
+      }
+    },
   },
 });

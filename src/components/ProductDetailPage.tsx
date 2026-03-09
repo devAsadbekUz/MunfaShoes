@@ -11,7 +11,7 @@ import { Helmet } from 'react-helmet-async';
 export function ProductDetailPage() {
     const { slug } = useParams();
     const navigate = useNavigate();
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const [product, setProduct] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
@@ -82,7 +82,11 @@ export function ProductDetailPage() {
                         </p>
 
                         <div className="mt-auto space-y-6">
-                            <Button size="lg" className="bg-[#FF5A7E] hover:bg-[#FF5A7E]/90 w-full md:w-auto px-12">
+                            <Button
+                                size="lg"
+                                className="bg-[#FF5A7E] hover:bg-[#FF5A7E]/90 w-full md:w-auto px-12"
+                                onClick={() => navigate('/contact')}
+                            >
                                 <Send className="mr-2" size={18} />
                                 {t('products.btn_order', 'Buyurtma berish')}
                             </Button>
