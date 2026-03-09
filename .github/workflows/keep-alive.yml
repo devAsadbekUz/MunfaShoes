@@ -12,6 +12,14 @@ jobs:
     steps:
       - name: Ping Supabase API
         run: |
-          curl -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/categories?select=id&limit=1" \
+          # Remove trailing slash if present and construct URL
+          BASE_URL=$(echo "${{ secrets.SUPABASE_URL }}" | sed 's/\/$//')
+          if [ -z "$BASE_URL" ]; then
+            echo "Error: SUPABASE_URL secret is empty!"
+            exit 1
+          fi
+          
+          echo "Pinging Supabase at $BASE_URL..."
+          curl -s -f -X GET "$BASE_URL/rest/v1/categories?select=id&limit=1" \
           -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
           -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
