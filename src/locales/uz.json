@@ -93,7 +93,9 @@
         "faq_3_q": "Ulgurji savdo mavjudmi?",
         "faq_3_a": "Ha, biz ulgurji savdo bilan shug'ullanamiz. Katta hajmli buyurtmalar uchun maxsus narxlar taklif etamiz. Batafsil ma'lumot uchun bizga aloqaga chiqing.",
         "faq_4_q": "Kafolat beriladimi?",
-        "faq_4_a": "Barcha mahsulotlarimiz sifat kafolatiga ega. Agar mahsulotda ishlab chiqarish nuqsoni aniqlansa, biz uni almashtirish yoki pul qaytarish xizmatini taklif qilamiz."
+        "faq_4_a": "Barcha mahsulotlarimiz sifat kafolatiga ega. Agar mahsulotda ishlab chiqarish nuqsoni aniqlansa, biz uni almashtirish yoki pul qaytarish xizmatini taklif qilamiz.",
+        "order_prefill": "Men quyidagi mahsulotga buyurtma bermoqchiman",
+        "inquiring_about": "So'rov"
     },
     "footer": {
         "desc": "Qo'qon shahrida joylashgan sifatli poyabzallar ishlab chiqaruvchi kompaniya.",
