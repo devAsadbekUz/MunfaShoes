@@ -81,7 +81,7 @@ export function ProductDetailPage() {
                             {product.description}
                         </p>
 
-                        <div className="mt-auto space-y-6">
+                        <div className="mt-auto space-y-6" id="product-actions-container">
                             <Button
                                 size="lg"
                                 className="bg-[#FF5A7E] hover:bg-[#FF5A7E]/90 w-full md:w-auto px-12"
