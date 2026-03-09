@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
+import { Link } from 'react-router-dom';
 import springProduct1 from 'figma:asset/49efa0a760b211066c5d3b55ab5623c4bdc68546.png';
 
 interface ProductsPageProps {
@@ -101,26 +102,28 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
-              <Card key={product.id} className="overflow-hidden hover:shadow-xl transition-shadow">
-                <div className="relative h-64 overflow-hidden bg-gray-100 flex items-center justify-center">
-                  {product.image_url ? (
-                    <img
-                      src={product.image_url}
-                      alt={product.title}
-                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-                    />
-                  ) : (
-                    <span className="text-gray-400">{t('products.no_image', "Rasm yo'q")}</span>
-                  )}
-                </div>
-                <div className="p-4">
-                  <Badge className="mb-2 bg-[#FF5A7E]">
-                    {categories.find(c => c.id === product.categorySlug)?.label || t('products.filter_all', 'Barchasi')}
-                  </Badge>
-                  <h3 className="text-xl mb-2 font-medium">{product.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{product.description}</p>
-                </div>
-              </Card>
+              <Link to={`/products/${product.slug}`} key={product.id}>
+                <Card className="overflow-hidden hover:shadow-xl transition-shadow h-full cursor-pointer">
+                  <div className="relative h-64 overflow-hidden bg-gray-100 flex items-center justify-center">
+                    {product.image_url ? (
+                      <img
+                        src={product.image_url}
+                        alt={product.title}
+                        className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                      />
+                    ) : (
+                      <span className="text-gray-400">{t('products.no_image', "Rasm yo'q")}</span>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <Badge className="mb-2 bg-[#FF5A7E]">
+                      {categories.find(c => c.id === product.categorySlug)?.label || t('products.filter_all', 'Barchasi')}
+                    </Badge>
+                    <h3 className="text-xl mb-2 font-medium">{product.title}</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">{product.description}</p>
+                  </div>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>

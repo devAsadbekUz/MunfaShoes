@@ -1,6 +1,12 @@
-import { createRoot } from "react-dom/client";
+import { ViteSSG } from 'vite-ssg';
 import App from "./App.tsx";
 import "./index.css";
-import "./i18n"; // Import i18n configuration
+import "./i18n";
 
-createRoot(document.getElementById("root")!).render(<App />);
+export const createApp = ViteSSG(
+    App,
+    { routes: [] },
+    () => {
+        // Custom setup if needed
+    }
+);

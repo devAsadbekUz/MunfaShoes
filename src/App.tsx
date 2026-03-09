@@ -10,11 +10,16 @@ import { LoginPage } from './components/admin/LoginPage';
 import { AdminLayout } from './components/admin/AdminLayout';
 import { FloatingCallButton } from './components/FloatingCallButton';
 import { Analytics } from '@vercel/analytics/react';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
+import { ProductDetailPage } from './components/ProductDetailPage';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('home');
   const [session, setSession] = useState<any>(null);
-  const isAdminRoute = window.location.pathname.startsWith('/admin');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -73,27 +78,42 @@ export default function App() {
 
   if (isAdminRoute) {
     if (!session) {
-      return <LoginPage onLoginSuccess={() => window.location.reload()} />;
+      return <LoginPage onLoginSuccess={() => navigate('/admin')} />;
     }
     return (
-      <AdminLayout onLogout={() => window.location.href = '/admin'}>
+      <AdminLayout onLogout={() => navigate('/admin')}>
         <div />
       </AdminLayout>
     );
   }
 
+  const LandingPage = () => (
+    <>
+      <div id="home"><HomePage onNavigate={scrollToSection} /></div>
+      <div id="about"><AboutPage /></div>
+      <div id="products"><ProductsPage onNavigate={scrollToSection} /></div>
+      <div id="contact"><ContactPage /></div>
+    </>
+  );
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navigation currentPage={activeSection} onNavigate={scrollToSection} />
-      <main className="flex-1">
-        <div id="home"><HomePage onNavigate={scrollToSection} /></div>
-        <div id="about"><AboutPage /></div>
-        <div id="products"><ProductsPage onNavigate={scrollToSection} /></div>
-        <div id="contact"><ContactPage /></div>
-      </main>
-      <Footer onNavigate={scrollToSection} />
-      {!isAdminRoute && <FloatingCallButton />}
-      <Analytics />
-    </div>
+    <HelmetProvider>
+      <div className="min-h-screen flex flex-col">
+        <Navigation currentPage={activeSection} onNavigate={scrollToSection} />
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/products" element={<ProductsPage onNavigate={scrollToSection} />} />
+            <Route path="/products/:slug" element={<ProductDetailPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            {/* Catch-all or other routes can be added here */}
+          </Routes>
+        </main>
+        <Footer onNavigate={scrollToSection} />
+        {!isAdminRoute && <FloatingCallButton />}
+        <Analytics />
+      </div>
+    </HelmetProvider>
   );
 }

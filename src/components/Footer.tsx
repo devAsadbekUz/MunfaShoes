@@ -2,6 +2,7 @@ import { Instagram, Send, Phone, Mail, MapPin } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import { Link, useLocation } from 'react-router-dom';
 import logoImage from 'figma:asset/5bccca66769f7f3963ad2d4645988beaa1bd0fd7.png';
 
 interface FooterProps {
@@ -10,6 +11,8 @@ interface FooterProps {
 
 export function Footer({ onNavigate }: FooterProps) {
   const { t } = useTranslation();
+  const location = useLocation();
+  const isHome = location.pathname === '/';
   const [settings, setSettings] = useState<any>({});
 
   useEffect(() => {
@@ -34,9 +37,13 @@ export function Footer({ onNavigate }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and About */}
           <div className="col-span-1">
-            <button onClick={() => onNavigate('home')} className="border-0 bg-transparent p-0 cursor-pointer">
+            <Link
+              to="/"
+              onClick={() => isHome && onNavigate('home')}
+              className="border-0 bg-transparent p-0 cursor-pointer"
+            >
               <img src={logoImage} alt="Munfa" className="h-12 mb-4" />
-            </button>
+            </Link>
             <p className="text-gray-400 text-sm">
               {t('footer.desc', "Qo'qon shahrida joylashgan sifatli poyabzallar ishlab chiqaruvchi kompaniya.")}
             </p>
@@ -46,10 +53,10 @@ export function Footer({ onNavigate }: FooterProps) {
           <div>
             <h3 className="mb-4">{t('footer.links_title', 'Tezkor havolalar')}</h3>
             <ul className="space-y-2 text-gray-400 text-sm">
-              <li><button onClick={() => onNavigate('home')} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.home', 'Bosh sahifa')}</button></li>
-              <li><button onClick={() => onNavigate('about')} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.about', 'Kompaniya haqida')}</button></li>
-              <li><button onClick={() => onNavigate('products')} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.products', 'Mahsulotlar')}</button></li>
-              <li><button onClick={() => onNavigate('contact')} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.contact', 'Aloqa')}</button></li>
+              <li><Link to="/" onClick={() => isHome && onNavigate('home')} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.home', 'Bosh sahifa')}</Link></li>
+              <li><Link to="/about" onClick={() => isHome && onNavigate('about')} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.about', 'Kompaniya haqida')}</Link></li>
+              <li><Link to="/products" onClick={() => isHome && onNavigate('products')} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.products', 'Mahsulotlar')}</Link></li>
+              <li><Link to="/contact" onClick={() => isHome && onNavigate('contact')} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.contact', 'Aloqa')}</Link></li>
             </ul>
           </div>
 
