@@ -52,7 +52,8 @@
     "recharts": "^2.15.2",
     "sonner": "^2.0.3",
     "tailwind-merge": "*",
-    "vaul": "^1.1.2"
+    "vaul": "^1.1.2",
+    "vite-react-ssg": "^0.9.1-beta.1"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
@@ -60,11 +61,10 @@
     "@types/react-dom": "^18.3.1",
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react-swc": "^3.10.2",
-    "vite": "6.3.5",
-    "vite-ssg": "^28.3.0"
+    "vite": "6.3.5"
   },
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/generate-sitemap.js && vite-ssg build"
+    "build": "node scripts/generate-sitemap.js && vite-react-ssg build"
   }
 }

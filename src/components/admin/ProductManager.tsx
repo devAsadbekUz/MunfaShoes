@@ -26,11 +26,26 @@ export function ProductManager() {
 
     // Form State
     const [title, setTitle] = useState('');
+    const [slug, setSlug] = useState('');
     const [description, setDescription] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+    const [editingProduct, setEditingProduct] = useState<any | null>(null);
+
+    const generateSlug = (text: string) => {
+        return text
+            .toLowerCase()
+            .replace(/[^\w ]+/g, '')
+            .replace(/ +/g, '-');
+    };
+
+    const handleTitleChange = (val: string) => {
+        setTitle(val);
+        if (!editingProduct) {
+            setSlug(generateSlug(val));
+        }
+    };
 
     useEffect(() => {
         fetchData();
@@ -47,7 +62,7 @@ export function ProductManager() {
 
         if (catData) {
             setCategories(catData);
-            if (catData.length > 0) setCategoryId(catData[0].id); // Default select first
+            if (catData.length > 0 && !editingProduct) setCategoryId(catData[0].id);
         }
 
         // Fetch Products
@@ -65,7 +80,7 @@ export function ProductManager() {
 
     const handleAddProduct = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!title || !description || !categoryId) {
+        if (!title || !description || !categoryId || !slug) {
             alert("Iltimos, barcha maydonlarni to'ldiring.");
             return;
         }
@@ -74,7 +89,6 @@ export function ProductManager() {
         let imageUrl = editingProduct ? editingProduct.image_url : '';
 
         try {
-            // 1. Upload Image (only if a new one is provided)
             if (imageFile) {
                 const fileExt = imageFile.name.split('.').pop();
                 const fileName = `${Math.random()}.${fileExt}`;
@@ -85,10 +99,7 @@ export function ProductManager() {
                     .upload(filePath, imageFile);
 
                 if (uploadError) {
-                    console.error('Error uploading image:', uploadError);
-                    alert('Rasm yuklashda xatolik yuz berdi.');
-                    setIsSubmitting(false);
-                    return;
+                    throw uploadError;
                 }
 
                 const { data: publicUrlData } = supabase.storage
@@ -100,13 +111,13 @@ export function ProductManager() {
 
             const productData = {
                 title,
+                slug,
                 description,
                 category_id: categoryId,
                 image_url: imageUrl
             };
 
             if (editingProduct) {
-                // Update Existing Record
                 const { error: updateError } = await supabase
                     .from('products')
                     .update(productData)
@@ -114,7 +125,6 @@ export function ProductManager() {
 
                 if (updateError) throw updateError;
             } else {
-                // Insert New Record
                 const { error: insertError } = await supabase
                     .from('products')
                     .insert([productData]);
@@ -122,20 +132,20 @@ export function ProductManager() {
                 if (insertError) throw insertError;
             }
 
-            // Success: Reset form and refresh
             cancelEdit();
             fetchData(false);
         } catch (error: any) {
             console.error('Error saving product:', error);
-            alert(`Mahsulotni saqlashda xato: ${error.message}`);
+            alert(`Mahsulotni saqlashda xato: ${error.message}. Ehtimol bazada 'slug' ustuni yo'q. SQL kodni run qiling.`);
         }
 
         setIsSubmitting(false);
     };
 
-    const startEdit = (product: Product) => {
+    const startEdit = (product: any) => {
         setEditingProduct(product);
         setTitle(product.title);
+        setSlug(product.slug || generateSlug(product.title));
         setDescription(product.description);
         setCategoryId(product.category_id);
         setImageFile(null);
@@ -145,6 +155,7 @@ export function ProductManager() {
     const cancelEdit = () => {
         setEditingProduct(null);
         setTitle('');
+        setSlug('');
         setDescription('');
         setImageFile(null);
         if (categories.length > 0) setCategoryId(categories[0].id);
@@ -197,8 +208,18 @@ export function ProductManager() {
                             <label className="block text-sm font-medium text-gray-700 mb-2">Mahsulot Nomi</label>
                             <Input
                                 value={title}
-                                onChange={(e) => setTitle(e.target.value)}
+                                onChange={(e) => handleTitleChange(e.target.value)}
                                 placeholder="Masalan: Qishki etik"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Slug (URL uchun)</label>
+                            <Input
+                                value={slug}
+                                onChange={(e) => setSlug(e.target.value)}
+                                placeholder="masalan: qishki-etik"
                                 required
                             />
                         </div>

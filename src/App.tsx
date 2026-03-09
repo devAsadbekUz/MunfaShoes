@@ -1,18 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
-import { HomePage } from './components/HomePage';
-import { AboutPage } from './components/AboutPage';
-import { ProductsPage } from './components/ProductsPage';
-import { ContactPage } from './components/ContactPage';
 import { supabase } from './lib/supabase';
 import { LoginPage } from './components/admin/LoginPage';
 import { AdminLayout } from './components/admin/AdminLayout';
 import { FloatingCallButton } from './components/FloatingCallButton';
 import { Analytics } from '@vercel/analytics/react';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+
 import { HelmetProvider } from 'react-helmet-async';
-import { ProductDetailPage } from './components/ProductDetailPage';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('home');
@@ -64,7 +60,7 @@ export default function App() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      const navHeight = 80; // height of the sticky navigation
+      const navHeight = 80;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - navHeight;
 
@@ -87,28 +83,12 @@ export default function App() {
     );
   }
 
-  const LandingPage = () => (
-    <>
-      <div id="home"><HomePage onNavigate={scrollToSection} /></div>
-      <div id="about"><AboutPage /></div>
-      <div id="products"><ProductsPage onNavigate={scrollToSection} /></div>
-      <div id="contact"><ContactPage /></div>
-    </>
-  );
-
   return (
     <HelmetProvider>
       <div className="min-h-screen flex flex-col">
         <Navigation currentPage={activeSection} onNavigate={scrollToSection} />
         <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/products" element={<ProductsPage onNavigate={scrollToSection} />} />
-            <Route path="/products/:slug" element={<ProductDetailPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="*" element={<LandingPage />} />
-          </Routes>
+          <Outlet context={{ scrollToSection }} />
         </main>
         <Footer onNavigate={scrollToSection} />
         {!isAdminRoute && <FloatingCallButton />}

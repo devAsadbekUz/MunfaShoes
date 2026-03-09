@@ -13,27 +13,58 @@ export function ProductDetailPage() {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [product, setProduct] = useState<any>(null);
+    const [telegramUrl, setTelegramUrl] = useState<string>('');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchProduct = async () => {
-            const { data, error } = await supabase
+        const fetchData = async () => {
+            // 1. Fetch Product
+            const { data: prodData, error: prodError } = await supabase
                 .from('products')
                 .select('*, categories(name, slug)')
                 .eq('slug', slug)
                 .single();
 
-            if (error) {
-                console.error('Error fetching product:', error);
+            if (prodError) {
+                console.error('Error fetching product:', prodError);
                 navigate('/products');
+                return;
             } else {
-                setProduct(data);
+                setProduct(prodData);
             }
+
+            // 2. Fetch Settings for Telegram URL
+            const { data: settingsData } = await supabase
+                .from('site_settings')
+                .select('telegram_url')
+                .eq('id', 1)
+                .single();
+
+            if (settingsData?.telegram_url) {
+                setTelegramUrl(settingsData.telegram_url);
+            }
+
             setLoading(false);
         };
 
-        if (slug) fetchProduct();
+        if (slug) fetchData();
     }, [slug, navigate]);
+
+    const handleOrder = () => {
+        if (!product) return;
+
+        const message = encodeURIComponent(`Assalomu alaykum! Men "${product.title}" mahsulotini buyurtma qilmoqchi edim.`);
+        let tMeUrl = telegramUrl || 'https://t.me/MunfaShoes';
+
+        // Ensure it starts with https://t.me/
+        if (!tMeUrl.startsWith('http')) {
+            // If it's just a username like @MunfaShoes or MunfaShoes
+            const username = tMeUrl.replace('@', '');
+            tMeUrl = `https://t.me/${username}`;
+        }
+
+        window.open(`${tMeUrl}?text=${message}`, '_blank');
+    };
 
     if (loading) return <div className="py-20 text-center">{t('common.loading', 'Yuklanmoqda...')}</div>;
     if (!product) return null;
@@ -85,7 +116,7 @@ export function ProductDetailPage() {
                             <Button
                                 size="lg"
                                 className="bg-[#FF5A7E] hover:bg-[#FF5A7E]/90 w-full md:w-auto px-12"
-                                onClick={() => navigate('/contact', { state: { productName: product.title } })}
+                                onClick={handleOrder}
                             >
                                 <Send className="mr-2" size={18} />
                                 {t('products.btn_order', 'Buyurtma berish')}
