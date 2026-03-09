@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Image as ImageIcon, Tags, Package, Settings, LogOut, MessageSquare } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Button } from '../ui/button';
