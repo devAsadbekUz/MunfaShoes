@@ -6,15 +6,12 @@ import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { motion } from 'framer-motion';
 import { Skeleton } from './ui/skeleton';
+import { HashLink } from 'react-router-hash-link';
 import springCollection from 'figma:asset/b30f6ee2c7a1a02fb6acad59bfd7282f2be40a19.png';
 import summerCollection from 'figma:asset/21b1d6cce1100780743fa6116ba46b9565d95d27.png';
 import winterCollection from 'figma:asset/747bf37266ec0a2b4e1cd6609cca25d73e2c4c9a.png';
 
-interface HomePageProps {
-  onNavigate: (page: string) => void;
-}
-
-export function HomePage({ onNavigate }: HomePageProps) {
+export function HomePage() {
   const [heroBgUrl, setHeroBgUrl] = useState<string | null>(null);
   const { t } = useTranslation();
 
@@ -32,6 +29,12 @@ export function HomePage({ onNavigate }: HomePageProps) {
     };
     fetchSettings();
   }, []);
+
+  const scrollWithOffset = (el: HTMLElement) => {
+    const yCoordinate = el.getBoundingClientRect().top + window.pageYOffset;
+    const yOffset = -80;
+    window.scrollTo({ top: yCoordinate + yOffset, behavior: 'smooth' });
+  };
 
   const features = [
     {
@@ -75,7 +78,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
   ];
 
   return (
-    <div>
+    <div id="home-top">
       {/* Hero Section */}
       <section className="relative h-[600px] flex items-center justify-center text-white overflow-hidden">
         {/* Background Image with Blur */}
@@ -103,22 +106,24 @@ export function HomePage({ onNavigate }: HomePageProps) {
             {t('home.hero_subtitle', 'Yuqori sifatli va zamonaviy poyabzallar ishlab chiqaruvchisi')}
           </p>
           <div className="flex gap-4 justify-center">
-            <Button
-              size="lg"
-              className="bg-[#FF5A7E] hover:bg-[#FF5A7E]/90"
-              onClick={() => onNavigate('products')}
-            >
-              {t('home.btn_products', 'Mahsulotlar bilan tanishing')}
-              <ArrowRight className="ml-2" size={20} />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="bg-white border-white text-black hover:font-bold hover:bg-white"
-              onClick={() => onNavigate('about')}
-            >
-              {t('home.btn_more', 'Batafsil')}
-            </Button>
+            <HashLink to="/products">
+              <Button
+                size="lg"
+                className="bg-[#FF5A7E] hover:bg-[#FF5A7E]/90"
+              >
+                {t('home.btn_products', 'Mahsulotlar bilan tanishing')}
+                <ArrowRight className="ml-2" size={20} />
+              </Button>
+            </HashLink>
+            <HashLink smooth to="/#about" scroll={scrollWithOffset}>
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-white border-white text-black hover:font-bold hover:bg-white"
+              >
+                {t('home.btn_more', 'Batafsil')}
+              </Button>
+            </HashLink>
           </div>
         </motion.div>
       </section>
@@ -174,33 +179,35 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="group cursor-pointer overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-shadow"
-                onClick={() => onNavigate('products')}
               >
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={category.image}
-                    alt={category.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                    <h3 className="text-2xl mb-2">{category.title}</h3>
-                    <p className="text-sm text-gray-200">{category.description}</p>
+                <HashLink to="/products">
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={category.image}
+                      alt={category.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                      <h3 className="text-2xl mb-2">{category.title}</h3>
+                      <p className="text-sm text-gray-200">{category.description}</p>
+                    </div>
                   </div>
-                </div>
+                </HashLink>
               </motion.div>
             ))}
           </div>
 
           <div className="text-center mt-12">
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-[#FF5A7E] text-[#FF5A7E] hover:bg-[#FF5A7E] hover:text-white"
-              onClick={() => onNavigate('products')}
-            >
-              {t('home.btn_all_products', "Barcha mahsulotlarni ko'rish")}
-            </Button>
+            <HashLink to="/products">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-[#FF5A7E] text-[#FF5A7E] hover:bg-[#FF5A7E] hover:text-white"
+              >
+                {t('home.btn_all_products', "Barcha mahsulotlarni ko'rish")}
+              </Button>
+            </HashLink>
           </div>
         </div>
       </section>
@@ -212,13 +219,14 @@ export function HomePage({ onNavigate }: HomePageProps) {
           <p className="text-xl mb-8 max-w-2xl mx-auto">
             {t('home.cta_desc', "Biz bilan hamkorlik qilish va sifatli mahsulotlarimizdan bahramand bo'lish uchun bog'laning")}
           </p>
-          <Button
-            size="lg"
-            className="bg-white text-[#FF5A7E] hover:bg-gray-100"
-            onClick={() => onNavigate('contact')}
-          >
-            {t('home.btn_contact', "Biz bilan bog'lanish")}
-          </Button>
+          <HashLink smooth to="/#contact" scroll={scrollWithOffset}>
+            <Button
+              size="lg"
+              className="bg-white text-[#FF5A7E] hover:bg-gray-100"
+            >
+              {t('home.btn_contact', "Biz bilan bog'lanish")}
+            </Button>
+          </HashLink>
         </div>
       </section>
     </div>

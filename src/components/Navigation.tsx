@@ -2,19 +2,12 @@ import { useState } from 'react';
 import { Menu, X, Phone, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from './ui/button';
-import { Link, useLocation } from 'react-router-dom';
+import { NavHashLink } from 'react-router-hash-link';
 import logoImage from 'figma:asset/5bccca66769f7f3963ad2d4645988beaa1bd0fd7.png';
 
-interface NavigationProps {
-  currentPage: string;
-  onNavigate: (page: string) => void;
-}
-
-export function Navigation({ currentPage, onNavigate }: NavigationProps) {
+export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { t, i18n } = useTranslation();
-  const location = useLocation();
-  const isHome = location.pathname === '/';
 
   const toggleLanguage = () => {
     const newLang = i18n.language.startsWith('ru') ? 'uz' : 'ru';
@@ -22,18 +15,16 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
   };
 
   const navItems = [
-    { id: 'home', label: t('nav.home', 'Bosh sahifa'), path: '/' },
-    { id: 'about', label: t('nav.about', 'Kompaniya haqida'), path: '/about' },
-    { id: 'products', label: t('nav.products', 'Mahsulotlar'), path: '/products' },
-    { id: 'contact', label: t('nav.contact', 'Aloqa'), path: '/contact' },
+    { id: 'home', label: t('nav.home', 'Bosh sahifa'), path: '/#home' },
+    { id: 'about', label: t('nav.about', 'Kompaniya haqida'), path: '/#about' },
+    { id: 'products', label: t('nav.products', 'Mahsulotlar'), path: '/#products' },
+    { id: 'contact', label: t('nav.contact', 'Aloqa'), path: '/#contact' },
   ];
 
-  const handleNavClick = (id: string) => {
-    if (isHome) {
-      onNavigate(id);
-    } else {
-      // If we are not on home, we just follow the link (handled by wrapping Link)
-    }
+  const scrollWithOffset = (el: HTMLElement) => {
+    const yCoordinate = el.getBoundingClientRect().top + window.pageYOffset;
+    const yOffset = -80;
+    window.scrollTo({ top: yCoordinate + yOffset, behavior: 'smooth' });
   };
 
   return (
@@ -42,27 +33,30 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex items-center shrink-0">
-            <Link
-              to="/"
-              onClick={() => isHome && onNavigate('home')}
+            <NavHashLink
+              smooth
+              to="/#home"
+              scroll={scrollWithOffset}
               className="flex items-center group"
             >
               <img src={logoImage} alt="Munfa" className="h-12 transition-transform group-hover:scale-105" />
-            </Link>
+            </NavHashLink>
           </div>
 
-          {/* Desktop Navigation Tracker */}
+          {/* Desktop Navigation */}
           <div className="hidden md:flex flex-1 items-center justify-center gap-8 lg:gap-14 whitespace-nowrap px-4 w-full">
             {navItems.map((item) => (
-              <Link
+              <NavHashLink
                 key={item.id}
+                smooth
                 to={item.path}
-                onClick={() => handleNavClick(item.id)}
-                className={`transition-colors hover:text-[#FF5A7E] font-medium text-[15px] ${currentPage === item.id ? 'text-[#FF5A7E]' : 'text-gray-700'
-                  }`}
+                scroll={scrollWithOffset}
+                className={({ isActive }) =>
+                  `transition-colors hover:text-[#FF5A7E] font-medium text-[15px] ${isActive ? 'text-[#FF5A7E]' : 'text-gray-700'}`
+                }
               >
                 {item.label}
-              </Link>
+              </NavHashLink>
             ))}
           </div>
 
@@ -102,21 +96,20 @@ export function Navigation({ currentPage, onNavigate }: NavigationProps) {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t">
             {navItems.map((item) => (
-              <Link
+              <NavHashLink
                 key={item.id}
+                smooth
                 to={item.path}
-                onClick={() => {
-                  handleNavClick(item.id);
-                  setMobileMenuOpen(false);
-                }}
-                className={`block w-full text-left px-4 py-3 transition-colors hover:bg-[#FF5A7E]/10 ${currentPage === item.id ? 'text-[#FF5A7E] bg-[#FF5A7E]/5' : 'text-gray-700'
-                  }`}
+                scroll={scrollWithOffset}
+                onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `block w-full text-left px-4 py-3 transition-colors hover:bg-[#FF5A7E]/10 ${isActive ? 'text-[#FF5A7E] bg-[#FF5A7E]/5' : 'text-gray-700'}`
+                }
               >
                 {item.label}
-              </Link>
+              </NavHashLink>
             ))}
             <div className="px-4 py-3 flex flex-col gap-3">
-
               <a href="tel:+998975017797">
                 <Button className="bg-[#FF5A7E] hover:bg-[#FF5A7E]/90 flex items-center gap-2 w-full justify-center">
                   <Phone size={18} />

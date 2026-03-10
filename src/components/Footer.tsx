@@ -2,17 +2,11 @@ import { Instagram, Send, Phone, Mail, MapPin } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
-import { Link, useLocation } from 'react-router-dom';
+import { HashLink } from 'react-router-hash-link';
 import logoImage from 'figma:asset/5bccca66769f7f3963ad2d4645988beaa1bd0fd7.png';
 
-interface FooterProps {
-  onNavigate: (page: string) => void;
-}
-
-export function Footer({ onNavigate }: FooterProps) {
+export function Footer() {
   const { t } = useTranslation();
-  const location = useLocation();
-  const isHome = location.pathname === '/';
   const [settings, setSettings] = useState<any>({});
 
   useEffect(() => {
@@ -31,19 +25,26 @@ export function Footer({ onNavigate }: FooterProps) {
     }
   };
 
+  const scrollWithOffset = (el: HTMLElement) => {
+    const yCoordinate = el.getBoundingClientRect().top + window.pageYOffset;
+    const yOffset = -80;
+    window.scrollTo({ top: yCoordinate + yOffset, behavior: 'smooth' });
+  };
+
   return (
     <footer className="bg-gray-900 text-white mt-20">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and About */}
           <div className="col-span-1">
-            <Link
-              to="/"
-              onClick={() => isHome && onNavigate('home')}
+            <HashLink
+              smooth
+              to="/#home"
+              scroll={scrollWithOffset}
               className="border-0 bg-transparent p-0 cursor-pointer"
             >
               <img src={logoImage} alt="Munfa" className="h-12 mb-4" />
-            </Link>
+            </HashLink>
             <p className="text-gray-400 text-sm">
               {t('footer.desc', "Qo'qon shahrida joylashgan sifatli poyabzallar ishlab chiqaruvchi kompaniya.")}
             </p>
@@ -53,10 +54,10 @@ export function Footer({ onNavigate }: FooterProps) {
           <div>
             <h3 className="mb-4">{t('footer.links_title', 'Tezkor havolalar')}</h3>
             <ul className="space-y-2 text-gray-400 text-sm">
-              <li><Link to="/" onClick={() => isHome && onNavigate('home')} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.home', 'Bosh sahifa')}</Link></li>
-              <li><Link to="/about" onClick={() => isHome && onNavigate('about')} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.about', 'Kompaniya haqida')}</Link></li>
-              <li><Link to="/products" onClick={() => isHome && onNavigate('products')} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.products', 'Mahsulotlar')}</Link></li>
-              <li><Link to="/contact" onClick={() => isHome && onNavigate('contact')} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.contact', 'Aloqa')}</Link></li>
+              <li><HashLink smooth to="/#home" scroll={scrollWithOffset} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.home', 'Bosh sahifa')}</HashLink></li>
+              <li><HashLink smooth to="/#about" scroll={scrollWithOffset} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.about', 'Kompaniya haqida')}</HashLink></li>
+              <li><HashLink smooth to="/#products" scroll={scrollWithOffset} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.products', 'Mahsulotlar')}</HashLink></li>
+              <li><HashLink smooth to="/#contact" scroll={scrollWithOffset} className="hover:text-[#FF5A7E] transition-colors border-0 bg-transparent p-0 text-left font-normal cursor-pointer">{t('nav.contact', 'Aloqa')}</HashLink></li>
             </ul>
           </div>
 

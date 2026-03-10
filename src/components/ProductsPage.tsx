@@ -7,13 +7,10 @@ import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import { Skeleton } from './ui/skeleton';
 import { motion, AnimatePresence } from 'framer-motion';
+import { HashLink } from 'react-router-hash-link';
 import springProduct1 from 'figma:asset/49efa0a760b211066c5d3b55ab5623c4bdc68546.png';
 
-interface ProductsPageProps {
-  onNavigate: (page: string) => void;
-}
-
-export function ProductsPage({ onNavigate }: ProductsPageProps) {
+export function ProductsPage() {
   const { t } = useTranslation();
   const [selectedCategory, setSelectedCategory] = useState('all');
 
@@ -164,13 +161,14 @@ export function ProductsPage({ onNavigate }: ProductsPageProps) {
           <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
             {t('products.cta_desc', "Bizning mahsulotlarimiz haqida batafsil ma'lumot olish va buyurtma berish uchun biz bilan bog'laning")}
           </p>
-          <Button
-            size="lg"
-            className="bg-[#FF5A7E] hover:bg-[#FF5A7E]/90"
-            onClick={() => onNavigate('contact')}
-          >
-            {t('products.btn_contact', "Bog'lanish")}
-          </Button>
+          <HashLink smooth to="/#contact">
+            <Button
+              size="lg"
+              className="bg-[#FF5A7E] hover:bg-[#FF5A7E]/90"
+            >
+              {t('products.btn_contact', "Bog'lanish")}
+            </Button>
+          </HashLink>
         </div>
       </section>
     </div>

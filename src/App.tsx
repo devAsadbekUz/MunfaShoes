@@ -13,7 +13,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Skeleton } from './components/ui/skeleton';
 
 export default function App() {
-  const [activeSection, setActiveSection] = useState('home');
   const [session, setSession] = useState<any>(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -33,47 +32,6 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => {
-    const observerOptions = {
-      root: null,
-      rootMargin: '-80px 0px -50% 0px',
-      threshold: 0
-    };
-
-    const observerCallback = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-    const sections = ['home', 'about', 'products', 'contact'];
-
-    sections.forEach((sectionId) => {
-      const element = document.getElementById(sectionId);
-      if (element) observer.observe(element);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const navHeight = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - navHeight;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-      setActiveSection(sectionId);
-    }
-  };
-
   if (isAdminRoute) {
     if (!session) {
       return <LoginPage onLoginSuccess={() => navigate('/admin')} />;
@@ -88,9 +46,9 @@ export default function App() {
   return (
     <HelmetProvider>
       <div className="min-h-screen flex flex-col">
-        <Navigation currentPage={activeSection} onNavigate={scrollToSection} />
+        <Navigation />
         <main className="flex-1">
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
               initial={{ opacity: 0 }}
@@ -108,12 +66,12 @@ export default function App() {
                   </div>
                 </div>
               }>
-                <Outlet context={{ scrollToSection }} />
+                <Outlet />
               </Suspense>
             </motion.div>
           </AnimatePresence>
         </main>
-        <Footer onNavigate={scrollToSection} />
+        <Footer />
         {!isAdminRoute && <FloatingCallButton />}
         <Analytics />
       </div>
